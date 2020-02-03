@@ -3,6 +3,7 @@ const verb = process.argv[2];
 const content = process.argv[3];
 const content2 = process.argv[4];
 const dbPath = 'C:\\Users\\admin\\Desktop\\node\\node_js\\db';
+let list,n
 
 //存数据库
 function save(list){
@@ -12,7 +13,7 @@ function save(list){
 //读数据库
 function fetch(){
   const fileContent = fs.readFileSync(dbPath).toString()
-  const list = JSON.parse(fileContent); //反序列化
+  list = JSON.parse(fileContent) || []; //反序列化
   return list
 }
 
@@ -21,45 +22,61 @@ function display(list){
   console.log(list)
 }
 
+//添加任务
+function addTask(list,content){
+  list.push([content,false])
+}
+
+//移除任务项
+function removeTask(list,n){
+  list.splice(n-1,1)
+}
+
+//标记已完成
+function markTaskAsDone(list,n){
+  list[n-1][1] = true
+}
+
+//编辑任务项
+function editTask(list,n,newContent){
+  list[n-1][0] = newContent
+}
+
+try{
+  fs.statSync(dbPath)
+}catch(error){
+  fs.writeFileSync(dbPath,'')
+}
+
 switch(verb){
 	case 'add':
-		fs.stat(dbPath,function(err,stat){
-			if(err == null){
-        const list = fetch();
-				list.push([content,false])
-        save(list);
-        display(list);
-			}else if(err.code == 'ENOENT'){
-				fs.writeFileSync(dbPath,'')
-				const list = [];
-				list.push([content,false])
-        save(list);
-        display(list);
-			}
-		});
+    list = fetch();
+    addTask(list,content);
+    save(list);
+    display(list);
 		break;
 	case 'list':
-    const list = fetch();
+    list = fetch();
     display(list);
 		break;
 	case 'delete':
-    const list = fetch();
-		const n = content
-		list.splice(n-1,1)
+    list = fetch();
+		n = content
+    removeTask(list,n)
     display(list);
     save(list);
 		break;
 	case 'done':
-    const list = fetch();
-		const n = content
-		list[n-1][1] = true
+    list = fetch();
+		n = content
+    markTaskAsDone(list,n)
     display(list);
     save(list);
 		break;
 	case 'edit':
-    const list = fetch();
-		const n = content
-		list[n-1][0] = content2
+    list = fetch();
+		n = content
+    editTask(list,n,content2)
     display(list);
     save(list);
 		break;
