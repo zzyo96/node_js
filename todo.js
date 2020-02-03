@@ -16,49 +16,51 @@ function fetch(){
   return list
 }
 
+//展示list
+function display(list){
+  console.log(list)
+}
+
 switch(verb){
 	case 'add':
 		fs.stat(dbPath,function(err,stat){
 			if(err == null){
         const list = fetch();
-				const task = content
-				list.push([task,false])
+				list.push([content,false])
         save(list);
-				console.log(list)
+        display(list);
 			}else if(err.code == 'ENOENT'){
 				fs.writeFileSync(dbPath,'')
 				const list = [];
-
-				const task = content
-				list.push([task,false])
+				list.push([content,false])
         save(list);
-				console.log(list)
+        display(list);
 			}
 		});
 		break;
 	case 'list':
     const list = fetch();
-		console.log(list)
+    display(list);
 		break;
 	case 'delete':
     const list = fetch();
 		const n = content
 		list.splice(n-1,1)
-		console.log(list)
+    display(list);
     save(list);
 		break;
 	case 'done':
     const list = fetch();
 		const n = content
 		list[n-1][1] = true
-		console.log(list)
+    display(list);
     save(list);
 		break;
 	case 'edit':
     const list = fetch();
 		const n = content
 		list[n-1][0] = content2
-		console.log(list)
+    display(list);
     save(list);
 		break;
 	default:
