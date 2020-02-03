@@ -3,7 +3,45 @@ const verb = process.argv[2];
 const content = process.argv[3];
 const content2 = process.argv[4];
 const dbPath = 'C:\\Users\\admin\\Desktop\\node\\node_js\\db';
-let list,n
+
+const list = fetch();
+const n = content;
+
+ensureDb();
+
+switch(verb){
+	case 'add':
+    addTask(list,content);
+		break;
+	case 'list':
+		break;
+	case 'delete':
+    removeTask(list,n)
+		break;
+	case 'done':
+    markTaskAsDone(list,n)
+		break;
+	case 'edit':
+    editTask(list,n,content2)
+		break;
+	default:
+		console.log('我不知道你想干啥')
+		break;
+}
+
+display(list);
+if(verb !== 'list'){
+  save(list);
+}
+
+//----以下是帮助函数------
+function ensureDb(){
+  try{
+    fs.statSync(dbPath)
+  }catch(error){
+    fs.writeFileSync(dbPath,'')
+  }
+}
 
 //存数据库
 function save(list){
@@ -12,8 +50,13 @@ function save(list){
 
 //读数据库
 function fetch(){
-  const fileContent = fs.readFileSync(dbPath).toString()
-  list = JSON.parse(fileContent) || []; //反序列化
+  let list
+  const fileContent = fs.readFileSync(dbPath).toString();
+  try{
+    list = JSON.parse(fileContent); //反序列化
+  }catch{
+    list = []
+  }
   return list
 }
 
@@ -41,48 +84,3 @@ function markTaskAsDone(list,n){
 function editTask(list,n,newContent){
   list[n-1][0] = newContent
 }
-
-try{
-  fs.statSync(dbPath)
-}catch(error){
-  fs.writeFileSync(dbPath,'')
-}
-
-switch(verb){
-	case 'add':
-    list = fetch();
-    addTask(list,content);
-    save(list);
-    display(list);
-		break;
-	case 'list':
-    list = fetch();
-    display(list);
-		break;
-	case 'delete':
-    list = fetch();
-		n = content
-    removeTask(list,n)
-    display(list);
-    save(list);
-		break;
-	case 'done':
-    list = fetch();
-		n = content
-    markTaskAsDone(list,n)
-    display(list);
-    save(list);
-		break;
-	case 'edit':
-    list = fetch();
-		n = content
-    editTask(list,n,content2)
-    display(list);
-    save(list);
-		break;
-	default:
-		console.log('我不知道你想干啥')
-		break;
-}
-
-
