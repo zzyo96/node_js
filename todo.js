@@ -10,7 +10,7 @@ if(verb === 'add'){
 			const list = JSON.parse(fileContent); //反序列化
 
 			const task = content 
-			list.push(task)
+			list.push([task,false])
 			fs.writeFileSync('C:\\Users\\admin\\Desktop\\node\\node_js\\db',JSON.stringify(list))  //序列化
 			console.log(list)
 		}else if(err.code == 'ENOENT'){
@@ -18,7 +18,7 @@ if(verb === 'add'){
 			const list = [];
 
 			const task = content 
-			list.push(task)
+			list.push([task,false])
 			fs.writeFileSync('C:\\Users\\admin\\Desktop\\node\\node_js\\db',JSON.stringify(list))  //序列化
 			console.log(list)
 		}
@@ -27,6 +27,13 @@ if(verb === 'add'){
 	const fileContent = fs.readFileSync('C:\\Users\\admin\\Desktop\\node\\node_js\\db').toString()
 	const list = JSON.parse(fileContent); //反序列化
 	console.log(list)
+}else if(verb === 'delete'){
+	const fileContent = fs.readFileSync('C:\\Users\\admin\\Desktop\\node\\node_js\\db').toString()
+	const list = JSON.parse(fileContent); //反序列化	
+	const n = content
+	list.splice(n-1,1)
+	console.log(list)
+	fs.writeFileSync('C:\\Users\\admin\\Desktop\\node\\node_js\\db',JSON.stringify(list))  //序列化
 }else{
 	console.log('我不知道你要干嘛，你的动词是' + verb)
 }
